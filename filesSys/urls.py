@@ -5,6 +5,9 @@ urlpatterns = [
     path('upload/', views.upload),
     path("getlist/", views.getFileList),
     path('info/<int:id>/', views.getInfo),
-    path('getfile/<str:type>/<int:id>/', views.getFile),
-    path('123', views.test)
+    path('getfile/byid/<str:type>/<int:id>/', views.getFileById),
+    path('getfile/byname/<str:name>/', views.getFileByName),
+    path('delete/byid/<int:id>/', views.deleteById),
+    path('delete/byname/<str:name>/', views.deleteByName),
+    path('123/', views.test)
 ]

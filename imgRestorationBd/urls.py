@@ -18,5 +18,13 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('files/', include("filesSys.urls")),
+    path('api/v1/files/', include("filesSys.urls")),
 ]
+
+# 'api/v1/files/'_urlpatterns = [
+#     path('upload/', views.upload),
+#     path("getlist/", views.getFileList),
+#     path('info/<int:id>/', views.getInfo),
+#     path('getfile/<str:type>/<int:id>/', views.getFile),
+#     path('123', views.test)
+# ]
