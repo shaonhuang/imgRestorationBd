@@ -56,7 +56,8 @@ def upload(request):
         file.f_type = filename.split('.')[-1]
         file.f_upload_date = UtcNow()
         file.save()
-        # os.system()
+        os.system('cd Models && python base.py')
+        print('processing and done')
         return HttpResponse("添加成功！")
 
 
@@ -92,6 +93,7 @@ def uploadAndProcess(request):
 
 
 def test(response):
+    os.system('cd Models && python base.py')
     return HttpResponse("Ok!")
 
 # 获取所有文件id
@@ -154,6 +156,21 @@ def getFileByName(request, name):
             image_data = f.read()
         return HttpResponse(image_data, content_type='image/jpg')
 
+def getFileByName_lr(request, name):
+    if(request.method == "GET"):
+        file = File.objects.get(f_name=name)
+        filepath = os.path.join(lrpath, file.f_name)
+        with open(filepath, 'rb') as f:
+            image_data = f.read()
+        return HttpResponse(image_data, content_type='image/jpg')
+
+def getFileByName_hr(request, name):
+    if(request.method == "GET"):
+        file = File.objects.get(f_name=name)
+        filepath = os.path.join(hrpath, file.f_name)
+        with open(filepath, 'rb') as f:
+            image_data = f.read()
+        return HttpResponse(image_data, content_type='image/jpg')
 
 def deleteById(request, id):
     try:
@@ -184,7 +201,8 @@ def checkDoneByName(request, name):
     try:
         if(request.method == "GET"):
             file = File.objects.get(f_name=name)
-            if os.path.isfile("./files/lr/" + file.f_name) and os.path.isfile("./files/hr/" + file.f_name):
+            print(file.f_name.split('.')[0] + '_esrgan.png')
+            if os.path.isfile("./files/lr/" + file.f_name) and os.path.isfile("./files/hr/" + file.f_name.split('.')[0] +'_esrgan.png'):
                 file.f_status = 'done'
                 file.save()
                 response = {
