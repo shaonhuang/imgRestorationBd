@@ -56,7 +56,38 @@ def upload(request):
         file.f_type = filename.split('.')[-1]
         file.f_upload_date = UtcNow()
         file.save()
+        # os.system()
+        return HttpResponse("添加成功！")
 
+
+def uploadAndProcess(request):
+    if request.method == "POST":    # 请求方法为POST时，进行处理
+        myFile = request.FILES.get("file", None)    # 获取上传的文件，如果没有文件，则默认为None
+        if not myFile:
+            return HttpResponse("no files for upload!")
+        # 判断文件类型，归类存放文件地址
+        filename = myFile.name
+        destination = ""
+        if(filename.endswith("png") or filename.endswith("jpg") or filename.endswith("jpeg")):
+            destination = open(os.path.join(imgpath, filename),
+                               'wb+')    # 打开特定的文件进行二进制的写操作
+        elif(filename.endswith("mp4") or filename.endswith("mkv")):
+            destination = open(os.path.join(videopath, filename), 'wb+')
+        else:
+            return HttpResponse("Not supported file type!")
+
+        for chunk in myFile.chunks():      # 分块写入文件
+            destination.write(chunk)
+        destination.close()
+
+        # 在collection中添加新数据
+        file = File()
+        file.f_name = filename
+        file.f_status = 'processing'
+        file.f_type = filename.split('.')[-1]
+        file.f_upload_date = UtcNow()
+        file.save()
+        # os.system(python ./Model/base.py)
         return HttpResponse("添加成功！")
 
 
@@ -147,3 +178,26 @@ def deleteByName(request, name):
             return HttpResponse('methods error')
     except:
         return HttpResponse('deleting ' + name + ' fail')
+
+
+def checkDoneByName(request, name):
+    try:
+        if(request.method == "GET"):
+            file = File.objects.get(f_name=name)
+            if os.path.isfile("./files/lr/" + file.f_name) and os.path.isfile("./files/hr/" + file.f_name):
+                file.f_status = 'done'
+                file.save()
+                response = {
+                    'filename': file.f_name,
+                    'status': 'done'
+                }
+                return HttpResponse(json.dumps(response))
+            else:
+                file.f_status = 'processing'
+                file.save()
+                return HttpResponse(json.dumps({
+                    filename: file.f_name,
+                    status: 'processing'
+                }))
+    except:
+        return HttpResponse('checkDoneByName ' + name + ' fail')

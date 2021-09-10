@@ -9,5 +9,6 @@ urlpatterns = [
     path('getfile/byname/<str:name>/', views.getFileByName),
     path('delete/byid/<int:id>/', views.deleteById),
     path('delete/byname/<str:name>/', views.deleteByName),
+    path('check/byname/<str:name>/', views.checkDoneByName),
     path('123/', views.test)
 ]
