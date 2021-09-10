@@ -167,7 +167,7 @@ def getFileByName_lr(request, name):
 def getFileByName_hr(request, name):
     if(request.method == "GET"):
         file = File.objects.get(f_name=name)
-        filepath = os.path.join(hrpath, file.f_name)
+        filepath = os.path.join(hrpath, file.f_name.split('.')[0]+'_esrgan.png')
         with open(filepath, 'rb') as f:
             image_data = f.read()
         return HttpResponse(image_data, content_type='image/jpg')
